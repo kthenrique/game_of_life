@@ -65,3 +65,16 @@ TEST(GoL, TooManyNeighboursIsFatal) {
 
   EXPECT_EQ(expected_generation, next_generation);
 }
+
+TEST(GoL, Reproduction) {
+
+  Cells initial_cells = {{1, 0}, {2, 0}, {0, 1}};
+  Cells next_cells = {{1, 0}, {1, 1}};
+
+  Generation generation{std::move(initial_cells)};
+
+  auto next_generation = generation.next();
+  Generation expected_generation{next_cells};
+
+  EXPECT_EQ(expected_generation, next_generation);
+}
