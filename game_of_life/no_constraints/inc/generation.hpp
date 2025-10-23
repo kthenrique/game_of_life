@@ -7,7 +7,7 @@ class Generation {
   Cells cells_alive;
 
 public:
-  Generation(Cells inital_seed) : cells_alive{inital_seed} {}
+  Generation(Cells inital_seed) : cells_alive{std::move(inital_seed)} {}
   Generation() = default;
 
   Generation &next();
