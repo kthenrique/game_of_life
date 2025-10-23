@@ -10,11 +10,7 @@ public:
   Generation(Cells inital_seed) : cells_alive{inital_seed} {}
   Generation() = default;
 
-  Generation &next() {
-    cells_alive = Cells();
-
-    return *this;
-  }
+  Generation &next();
 
   auto operator<=>(const Generation &) const = default;
 };

@@ -1,3 +1,3 @@
-add_library(GameOfLifeLib game_of_life.cpp)
+add_library(GameOfLifeLib generation.cpp)
 
 target_include_directories(GameOfLifeLib PRIVATE ${CMAKE_SOURCE_DIR})
