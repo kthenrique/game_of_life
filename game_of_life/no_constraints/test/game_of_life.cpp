@@ -15,8 +15,8 @@ TEST(GoL, UnderPopulationResultsInExtinction) {
 
 TEST(GoL, SurvivalBy2DoomedNeighbours) {
 
-  Cells initial_cells = {{1, 0}, {0, 1}, {2, 1}};
-  Cells next_cells = {{1, 0}};
+  Cells initial_cells = {{0, 2}, {1, 1}, {2, 0}};
+  Cells next_cells = {{1, 1}};
 
   Generation generation{std::move(initial_cells)};
 
