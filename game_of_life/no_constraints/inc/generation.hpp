@@ -2,12 +2,17 @@
 #define GENERATION_HPP
 
 #include <inc/cell.hpp>
-#include <vector>
 
 class Generation {
-  std::vector<Cell> alive;
+  Cells cells_alive;
 
 public:
+  Generation(Cells cells) : cells_alive{cells} {}
   Generation() = default;
+
+  Generation &next() { return *this; }
+
+  auto operator<=>(const Generation &) const = default;
 };
+
 #endif
