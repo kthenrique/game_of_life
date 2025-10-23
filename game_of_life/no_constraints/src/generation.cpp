@@ -13,7 +13,7 @@ Generation &Generation::next() {
         nr_alive_neighbours++;
       }
     }
-    if (nr_alive_neighbours != 2) {
+    if (nr_alive_neighbours != 2 && nr_alive_neighbours != 3) {
       cells_to_die.push_back(cell);
     }
   }
