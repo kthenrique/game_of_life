@@ -7,10 +7,14 @@ class Generation {
   Cells cells_alive;
 
 public:
-  Generation(Cells cells) : cells_alive{cells} {}
+  Generation(Cells inital_seed) : cells_alive{inital_seed} {}
   Generation() = default;
 
-  Generation &next() { return *this; }
+  Generation &next() {
+    cells_alive = Cells();
+
+    return *this;
+  }
 
   auto operator<=>(const Generation &) const = default;
 };
