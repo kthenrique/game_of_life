@@ -12,3 +12,16 @@ TEST(GoL, UnderPopulationResultsInExtinction) {
 
   EXPECT_EQ(expected_generation, next_generation);
 }
+
+TEST(GoL, SurvivalBy2DoomedNeighbours) {
+
+  Cells initial_cells = {{1, 0}, {0, 1}, {2, 1}};
+  Cells next_cells = {{1, 0}};
+
+  Generation generation{initial_cells};
+
+  auto next_generation = generation.next();
+  Generation expected_generation{next_cells};
+
+  EXPECT_EQ(expected_generation, next_generation);
+}
