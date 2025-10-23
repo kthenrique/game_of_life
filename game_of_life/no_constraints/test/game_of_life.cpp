@@ -53,8 +53,10 @@ TEST(GoL, SurvivalBy3DoomedNeighbours) {
 
 TEST(GoL, TooManyNeighboursIsFatal) {
 
-  Cells initial_cells = {{0, 0}, {1, 0}, {0, 1}, {2, 1}, {1, 2}};
-  Cells next_cells = {{0, 0}, {2, 1}, {1, 2}};
+  Cells initial_cells = {{2, 0}, {1, 1}, {3, 1}, {0, 2}, {2, 2},
+                         {4, 2}, {1, 3}, {3, 3}, {2, 4}};
+  Cells next_cells = {{2, 0}, {1, 1}, {3, 1}, {0, 2},
+                      {4, 2}, {1, 3}, {3, 3}, {2, 4}};
 
   Generation generation{std::move(initial_cells)};
 
