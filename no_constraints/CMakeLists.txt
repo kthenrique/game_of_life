@@ -19,7 +19,7 @@ target_sources(GameOfLife
 )
 target_include_directories(GameOfLife
     PRIVATE
-    inc/
+    ${CMAKE_SOURCE_DIR}
 )
 target_link_libraries(GameOfLife PRIVATE GameOfLifeLib)
 
