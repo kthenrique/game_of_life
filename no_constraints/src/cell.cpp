@@ -9,19 +9,20 @@ Cells Cell::neighbours() const {
   }
 
   if (not_adjacent_to_any_axis) {
-    neighbours.insert(neighbours.end(), {{x - 1, y - 1},
-                                         {x - 1, y},
-                                         {x - 1, y + 1},
-                                         {x + 1, y - 1},
-                                         {x, y - 1}});
+    neighbours.insert({{x - 1, y - 1},
+                       {x - 1, y},
+                       {x - 1, y + 1},
+                       {x + 1, y - 1},
+                       {x, y - 1}});
     return neighbours;
   }
 
   if (y == 0) {
-    neighbours.insert(neighbours.end(), {{x - 1, y}, {x - 1, y + 1}});
+    neighbours.insert({{x - 1, y}, {x - 1, y + 1}});
   }
+
   if (x == 0) {
-    neighbours.insert(neighbours.end(), {{x + 1, y - 1}, {x, y - 1}});
+    neighbours.insert({{x + 1, y - 1}, {x, y - 1}});
   }
 
   return neighbours;
