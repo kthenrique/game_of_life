@@ -1,5 +1,5 @@
-#include <algorithm>
 #include <inc/generation.hpp>
+#include <iostream>
 
 Generation &Generation::next() {
   Cells cells_to_die;
@@ -7,16 +7,16 @@ Generation &Generation::next() {
 
   for (auto const &cell : cells_alive) {
     auto nr_alive_neighbours{0};
-    auto neighbours = cell.neighbours();
 
-    for (auto const &neighbour : neighbours) {
+    for (auto const &neighbour : cell.neighbours()) {
       neighbour_count[neighbour]++;
-      if (std::ranges::find(cells_alive, neighbour) != cells_alive.end()) {
+      if (cells_alive.contains(neighbour)) {
         nr_alive_neighbours++;
       }
     }
     if ((nr_alive_neighbours != 2 && nr_alive_neighbours != 3) ||
         nr_alive_neighbours > 3) {
+      std::cout << "kill " << cell << std::endl;
       cells_to_die.insert(cell);
     }
   }

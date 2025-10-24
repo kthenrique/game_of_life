@@ -27,3 +27,8 @@ Cells Cell::neighbours() const {
 
   return neighbours;
 }
+
+std::ostream &operator<<(std::ostream &out, Cell const &cell) {
+  out << "(" << cell.x << ", " << cell.y << ")";
+  return out;
+}

@@ -3,6 +3,7 @@
 
 #include <cstddef>
 #include <functional>
+#include <ostream>
 #include <unordered_set>
 
 struct Cell;
@@ -16,6 +17,8 @@ struct Cell {
   auto operator<=>(const Cell &) const = default;
   Cells neighbours() const;
 };
+
+std::ostream &operator<<(std::ostream &out, Cell const &cell);
 
 template <> struct std::hash<Cell> {
   constexpr std::size_t operator()(const Cell &c) const noexcept {
