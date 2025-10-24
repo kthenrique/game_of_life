@@ -1,5 +1,6 @@
 #include <inc/cell.hpp>
 
+// TODO: Remove constraint on first quadrant and allow negative cells
 Cells Cell::neighbours() const {
   Cells neighbours = {{x, y + 1}, {x + 1, y + 1}, {x + 1, y}};
   auto const at_origin = x == 0 && 0 == y;
