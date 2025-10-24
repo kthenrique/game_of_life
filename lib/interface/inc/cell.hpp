@@ -15,10 +15,12 @@ struct Cell {
   std::size_t y;
 
   auto operator<=>(const Cell &) const = default;
-  Cells neighbours() const;
 };
 
-std::ostream &operator<<(std::ostream &out, Cell const &cell);
+inline std::ostream &operator<<(std::ostream &out, Cell const &cell) {
+  out << "(" << cell.x << ", " << cell.y << ")";
+  return out;
+}
 
 template <> struct std::hash<Cell> {
   constexpr std::size_t operator()(const Cell &c) const noexcept {
