@@ -1,7 +1,7 @@
 #ifndef GENERATION_HPP
 #define GENERATION_HPP
 
-#include <inc/cell.hpp>
+#include <cell.hpp>
 
 class Generation {
   Cells cells_alive;

@@ -1,4 +1,4 @@
-#include <inc/generation.hpp>
+#include <generation.hpp>
 #include <iostream>
 
 Generation &Generation::next() {

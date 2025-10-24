@@ -1,5 +1,5 @@
 #include <chrono>
-#include <inc/generation.hpp>
+#include <generation.hpp>
 #include <iostream>
 #include <ranges>
 #include <thread>

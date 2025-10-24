@@ -1,5 +1,5 @@
+#include <generation.hpp>
 #include <gtest/gtest.h>
-#include <inc/generation.hpp>
 
 struct Parameters {
   Generation initial_generation;

@@ -1,4 +1,4 @@
-#include <inc/cell.hpp>
+#include <cell.hpp>
 
 // TODO: Remove constraint on first quadrant and allow negative cells
 Cells Cell::neighbours() const {
