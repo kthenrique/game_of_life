@@ -13,6 +13,10 @@ public:
   Generation &next();
 
   auto operator<=>(const Generation &) const = default;
+
+  friend std::ostream &operator<<(std::ostream &os, const Generation &p);
 };
+
+std::ostream &operator<<(std::ostream &os, const Generation &p);
 
 #endif

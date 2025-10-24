@@ -32,3 +32,13 @@ Generation &Generation::next() {
   }
   return *this;
 }
+
+std::ostream &operator<<(std::ostream &os, const Generation &gen) {
+  os << "[ ";
+  for (auto const &cell : gen.cells_alive) {
+    os << cell << " ";
+  }
+  os << "]";
+
+  return os;
+}

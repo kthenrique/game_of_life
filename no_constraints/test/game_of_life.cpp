@@ -1,80 +1,65 @@
 #include <gtest/gtest.h>
 #include <inc/generation.hpp>
 
-TEST(GoL, NoNeighboursMeansExtinction) {
+struct Parameters {
+  Generation initial_generation;
+  Generation expected_next_generation;
+};
 
-  Cells initial_cells = {{0, 0}, {0, 2}, {2, 0}, {2, 2}};
-
-  Generation generation{std::move(initial_cells)};
-
-  auto next_generation = generation.next();
-  Generation expected_generation;
-
-  EXPECT_EQ(expected_generation, next_generation);
+std::ostream &operator<<(std::ostream &os, const Parameters &p) {
+  os << "{initial_generation=" << p.initial_generation
+     << ", expected_next_generation=" << p.expected_next_generation << "}";
+  return os;
 }
 
-TEST(GoL, UnderPopulationResultsInExtinction) {
+Parameters NoNeighboursMeansExtinction = {
+    Generation(Cells{{0, 0}, {0, 2}, {2, 0}, {2, 2}}), Generation()};
 
-  Cells initial_cells = {{1, 1}, {2, 0}};
+Parameters UnderPopulationResultsInExtinction = {
+    Generation(Cells{{1, 1}, {2, 0}}), Generation()};
 
-  Generation generation{std::move(initial_cells)};
+Parameters SurvivalBy2DoomedNeighbours = {
+    Generation(Cells{{0, 2}, {1, 1}, {2, 0}}), Generation(Cells{{1, 1}})};
 
-  auto next_generation = generation.next();
-  Generation expected_generation;
+Parameters SurvivalBy3DoomedNeighbours = {
+    Generation(Cells{{0, 0}, {1, 1}, {0, 2}, {2, 2}}),
+    Generation(Cells{{0, 1}, {1, 1}, {1, 2}})};
 
-  EXPECT_EQ(expected_generation, next_generation);
+Parameters TooManyNeighboursIsFatal = {
+    Generation(Cells{{2, 0},
+                     {1, 1},
+                     {3, 1},
+                     {0, 2},
+                     {2, 2},
+                     {4, 2},
+                     {1, 3},
+                     {3, 3},
+                     {2, 4}}),
+    Generation(
+        Cells{{2, 0}, {1, 1}, {3, 1}, {0, 2}, {4, 2}, {1, 3}, {3, 3}, {2, 4}})};
+
+Parameters Reproduction = {Generation(Cells{{1, 0}, {2, 0}, {0, 1}}),
+                           Generation(Cells{{1, 0}, {1, 1}})};
+
+class GoLTests : public ::testing::TestWithParam<Parameters> {};
+
+TEST_P(GoLTests, NextGeneration) {
+  auto generation = GetParam().initial_generation;
+  EXPECT_EQ(generation.next(), GetParam().expected_next_generation);
 }
 
-TEST(GoL, SurvivalBy2DoomedNeighbours) {
+constexpr std::array<char const *, 6> test_name = {
+    "NoNeighboursMeansExtinction", "UnderPopulationResultsInExtinction",
+    "SurvivalBy2DoomedNeighbours", "SurvivalBy3DoomedNeighbours",
+    "TooManyNeighboursIsFatal",    "Reproduction"};
 
-  Cells initial_cells = {{0, 2}, {1, 1}, {2, 0}};
-  Cells next_cells = {{1, 1}};
-
-  Generation generation{std::move(initial_cells)};
-
-  auto next_generation = generation.next();
-  Generation expected_generation{next_cells};
-
-  EXPECT_EQ(expected_generation, next_generation);
-}
-
-TEST(GoL, SurvivalBy3DoomedNeighbours) {
-
-  Cells initial_cells = {{0, 0}, {1, 1}, {0, 2}, {2, 2}};
-  Cells next_cells = {{0, 1}, {1, 1}, {1, 2}};
-
-  Generation generation{std::move(initial_cells)};
-
-  auto next_generation = generation.next();
-  Generation expected_generation{next_cells};
-
-  EXPECT_EQ(expected_generation, next_generation);
-}
-
-TEST(GoL, TooManyNeighboursIsFatal) {
-
-  Cells initial_cells = {{2, 0}, {1, 1}, {3, 1}, {0, 2}, {2, 2},
-                         {4, 2}, {1, 3}, {3, 3}, {2, 4}};
-  Cells next_cells = {{2, 0}, {1, 1}, {3, 1}, {0, 2},
-                      {4, 2}, {1, 3}, {3, 3}, {2, 4}};
-
-  Generation generation{std::move(initial_cells)};
-
-  auto next_generation = generation.next();
-  Generation expected_generation{next_cells};
-
-  EXPECT_EQ(expected_generation, next_generation);
-}
-
-TEST(GoL, Reproduction) {
-
-  Cells initial_cells = {{1, 0}, {2, 0}, {0, 1}};
-  Cells next_cells = {{1, 0}, {1, 1}};
-
-  Generation generation{std::move(initial_cells)};
-
-  auto next_generation = generation.next();
-  Generation expected_generation{next_cells};
-
-  EXPECT_EQ(expected_generation, next_generation);
-}
+INSTANTIATE_TEST_SUITE_P(NextGeneration, GoLTests,
+                         ::testing::Values(NoNeighboursMeansExtinction,
+                                           UnderPopulationResultsInExtinction,
+                                           SurvivalBy2DoomedNeighbours,
+                                           SurvivalBy3DoomedNeighbours,
+                                           TooManyNeighboursIsFatal,
+                                           Reproduction),
+                         [](const ::testing::TestParamInfo<Parameters> &info) {
+                           return test_name[info.index];
+                         });
