@@ -27,8 +27,8 @@ Generation &Generation::next() {
 
   for (auto const &[cell, count] : neighbour_count) {
     if (count == 3) {
-      std::cout << "create " << cell << std::endl;
-      cells_alive.insert(cell);
+      auto [_, inserted] = cells_alive.insert(cell);
+      inserted ? std::cout << "create " << cell << std::endl : std::cout;
     }
   }
   return *this;

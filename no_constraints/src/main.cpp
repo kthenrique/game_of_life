@@ -5,7 +5,7 @@
 #include <thread>
 
 int main(int argc, char *argv[]) {
-  auto nr_epochs = 15;
+  auto nr_epochs = 5;
   auto epoch_period = std::chrono::seconds(1);
   std::size_t epoch{0};
   Cells initial_seed = {{0, 0}, {1, 0}, {2, 0}, {3, 0}};
@@ -16,7 +16,7 @@ int main(int argc, char *argv[]) {
 
   std::cout << "\nStart of life:" << std::endl;
   for ([[maybe_unused]] auto _ : std::ranges::views::iota(0, nr_epochs)) {
-    std::cout << "EPOCH nr. " << epoch++ << std::endl;
+    std::cout << "EPOCH nr. " << epoch++ << ": " << gen << std::endl;
     gen.next();
     std::this_thread::sleep_for(epoch_period);
   }
