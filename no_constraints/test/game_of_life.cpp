@@ -41,7 +41,7 @@ TEST(GoL, SurvivalBy2DoomedNeighbours) {
 TEST(GoL, SurvivalBy3DoomedNeighbours) {
 
   Cells initial_cells = {{0, 0}, {1, 1}, {0, 2}, {2, 2}};
-  Cells next_cells = {{1, 1}};
+  Cells next_cells = {{0, 1}, {1, 1}, {1, 2}};
 
   Generation generation{std::move(initial_cells)};
 
