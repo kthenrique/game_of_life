@@ -7,9 +7,15 @@ FetchContent_Declare(ftxui
  
 FetchContent_MakeAvailable(ftxui)
  
-add_executable(main main.cpp)
-target_link_libraries(main
-  PRIVATE ftxui::screen
-  PRIVATE ftxui::dom
-  PRIVATE ftxui::component
+add_executable(viewer main.cpp)
+
+target_include_directories(viewer PRIVATE
+    ${CMAKE_SOURCE_DIR}/lib/${IMPLEMENTATION}/inc/)
+
+target_link_libraries(viewer
+  PRIVATE
+  ftxui::screen
+  ftxui::dom
+  ftxui::component
+  GameOfLifeLib
 )
