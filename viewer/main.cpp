@@ -37,19 +37,27 @@ int main() {
   auto dead = "□";
 
   auto screen = ::ftxui::ScreenInteractive::Fullscreen();
-  Cell window_size{21, 21};
+  Cell window_size{26, 26};
 
   auto epoch_period = std::chrono::milliseconds(1500);
   auto const epoch_period_increment = std::chrono::milliseconds(100);
   std::size_t epoch{0};
 
-  Cells initial_seed = std::unordered_set<Cell>{{0, 0}, {1, 0}, {2, 0}, {3, 0}};
+  Cells initial_seed = std::unordered_set<Cell>{
+      {-8, 2},  {-8, 1}, {-8, 0},  {-8, -1}, {-8, -2}, {-7, 0}, {-6, 1},
+      {-6, -1}, {-5, 2}, {-5, -2}, {-3, -2},
+
+      {0, 2},   {0, 1},  {0, 0},   {0, -1},  {0, -2},  {-2, 2}, {-1, 2},
+      {0, 2},   {1, 2},  {2, 2},   {2, -2},
+
+      {5, 2},   {5, 1},  {5, 0},   {5, -1},  {5, -2},  {6, 0},  {7, 0},
+      {8, 2},   {8, 1},  {8, 0},   {8, -1},  {8, -2},  {10, -2}};
   auto gen = Generation<Cells>(initial_seed);
 
   std::atomic<int64_t> offset_x{0};
   std::atomic<int64_t> offset_y{0};
 
-  int runtime_ctrl_selected = 1;
+  int runtime_ctrl_selected = 2; // begin paused
   auto reaction_to_runtime_ctrl = std::chrono::milliseconds(500);
 
   std::array<std::string, 2> clock_frames = {"●", "○"};
@@ -81,20 +89,26 @@ int main() {
 
     auto const &cells = gen.get_alive_cells();
     for (auto const &cell : cells) {
-      Cell const transformed = {.x = std::abs(cell.x - 10) + offset_y,
-                                .y = cell.y + 10 + offset_x};
+      Cell const transformed = {.x = cell.x + 10 + offset_x,
+                                .y = std::abs(cell.y - 10) + offset_y};
       if (transformed.x < 0 || transformed.y < 0 ||
           transformed.x >= window_size.x || transformed.y >= window_size.y) {
         continue;
       }
 
-      planet[transformed.x][transformed.y] =
+      planet[transformed.y][transformed.x] =
           text(alive) | center | size(WIDTH, EQUAL, 2) | size(HEIGHT, EQUAL, 1);
     }
   };
 
   // Refresher
   std::thread([&] {
+    {
+      std::lock_guard<std::mutex> lg(planet_mutex);
+
+      update_window_view();
+    }
+    screen.PostEvent(Event::Custom);
     while (true) {
       switch (runtime_ctrl_selected) {
       case 3: { // stop
