@@ -18,6 +18,21 @@ using ::ftxui::size;
 using ::ftxui::text;
 
 int main() {
+  auto title = vbox({
+                   text("┏━╸┏━┓┏┳┓┏━╸ ┏━┓┏━╸ ╻  ╻┏━╸┏━╸"),
+                   text("┃╺┓┣━┫┃┃┃┣╸  ┃ ┃┣╸  ┃  ┃┣╸ ┣╸ "),
+                   text("┗━┛╹ ╹╹ ╹┗━╸ ┗━┛╹   ┗━╸╹╹  ┗━╸"),
+
+               }) |
+               bold | hcenter;
+
+  auto author_line = text("by Kelve T. Henrique") | dim | align_right;
+
+  auto header = vbox({
+      title,
+      author_line,
+  });
+
   auto alive = "■";
   auto dead = "□";
 
@@ -25,7 +40,7 @@ int main() {
   Cell window_size{21, 21};
 
   auto epoch_period = std::chrono::milliseconds(1500);
-  auto epoch_period_increment = std::chrono::milliseconds(100);
+  auto const epoch_period_increment = std::chrono::milliseconds(100);
   std::size_t epoch{0};
 
   Cells initial_seed = std::unordered_set<Cell>{{0, 0}, {1, 0}, {2, 0}, {3, 0}};
@@ -35,7 +50,6 @@ int main() {
   std::atomic<int64_t> offset_y{0};
 
   int runtime_ctrl_selected = 1;
-  std::vector<std::string> runtime_entries = {"⏮", "⏵", "⏸", "⏹", "⏭"};
   auto reaction_to_runtime_ctrl = std::chrono::milliseconds(500);
 
   std::array<std::string, 2> clock_frames = {"●", "○"};
@@ -84,7 +98,7 @@ int main() {
     while (true) {
       switch (runtime_ctrl_selected) {
       case 3: { // stop
-        screen.PostEvent(Event::End);
+        screen.Post([&] { screen.Exit(); });
         return;
       }
       case 2: { // pause
@@ -128,27 +142,52 @@ int main() {
     };
   };
 
-  auto up_btn = Button("⏶", update_offset(1, offset_y));
-  auto left_btn = Button("⏴", update_offset(1, offset_x));
-  auto right_btn = Button("⏵", update_offset(-1, offset_x));
-  auto down_btn = Button("⏷", update_offset(-1, offset_y));
+  std::string tooltip;
+  auto erase_tooltip = [&] { tooltip = ""; };
 
-  std::vector<Component> runtime_ctrl_btn;
-  for (int i = 0; i < runtime_entries.size(); ++i) {
-    runtime_ctrl_btn.push_back(
-        Button(runtime_entries[i], [&, i] { runtime_ctrl_selected = i; }));
-  }
-  auto runtime_ctrl_container = Container::Horizontal(runtime_ctrl_btn);
+  auto up_btn = Hoverable(
+      Button("⏶", update_offset(1, offset_y)),
+      [&] { tooltip = "Move view up"; }, erase_tooltip);
+  auto left_btn = Hoverable(
+      Button("⏴", update_offset(1, offset_x)),
+      [&] { tooltip = "Move view left"; }, erase_tooltip);
+  auto right_btn = Hoverable(
+      Button("⏵", update_offset(-1, offset_x)),
+      [&] { tooltip = "Move view right"; }, erase_tooltip);
+  auto down_btn = Hoverable(
+      Button("⏷", update_offset(-1, offset_y)),
+      [&] { tooltip = "Move view down"; }, erase_tooltip);
+
+  auto slow_time_btn = Hoverable(
+      Button("⏮", [&] { runtime_ctrl_selected = 0; }),
+      [&] { tooltip = "🛈 Increase epoch period by 100ms"; }, erase_tooltip);
+  auto play_btn = Hoverable(
+      Button("⏵", [&] { runtime_ctrl_selected = 1; }),
+      [&] { tooltip = "🛈 Continue"; }, erase_tooltip);
+  auto pause_time_btn = Hoverable(
+      Button("⏸", [&] { runtime_ctrl_selected = 2; }),
+      [&] { tooltip = "🛈 Pause time"; }, erase_tooltip);
+  auto stop_btn = Hoverable(
+      Button("⏹", [&] { runtime_ctrl_selected = 3; }),
+      [&] { tooltip = "🛈 Exit game"; }, erase_tooltip);
+  auto speed_time_btn = Hoverable(
+      Button("⏭", [&] { runtime_ctrl_selected = 4; }),
+      [&] { tooltip = "🛈 Decrease epoch period by 100ms"; }, erase_tooltip);
 
   auto controls = Container::Horizontal(
-      {up_btn, left_btn, right_btn, down_btn, runtime_ctrl_container});
+      {up_btn, left_btn, right_btn, down_btn, slow_time_btn, play_btn,
+       pause_time_btn, stop_btn, speed_time_btn});
+
   auto main_renderer = Renderer(controls, [&] {
     std::lock_guard<std::mutex> lg(planet_mutex);
     auto epoch_label =
-        text(std::format("Epoch #{:5} {}", epoch, clock_frames[frame]));
+        text(std::format("Epoch #{:05} {}", epoch, clock_frames[frame]));
     auto label =
         text(std::format("🖸({}, {})", -1 * offset_x.load(), offset_y.load()));
-    return vbox({hbox({epoch_label | flex, label}), separator(),
+    auto tooltip_label = text(std::format("{}", tooltip));
+
+    return vbox({header | hcenter, hbox({epoch_label | flex, label}),
+                 separator(),
                  hbox({gridbox(planet) | border | center}) | hcenter,
                  hbox({hbox({
                            up_btn->Render(),
@@ -156,8 +195,13 @@ int main() {
                            right_btn->Render(),
                            down_btn->Render(),
                        }) | border,
-                       hbox({runtime_ctrl_container->Render()}) | border |
-                           flex})}) |
+                       filler(),
+                       hbox({slow_time_btn->Render(), play_btn->Render(),
+                             pause_time_btn->Render(), stop_btn->Render(),
+                             speed_time_btn->Render()}) |
+                           border}),
+                 tooltip == "" ? vbox({text(""), text("")})
+                               : vbox({separator(), tooltip_label})}) |
            center;
   });
 
