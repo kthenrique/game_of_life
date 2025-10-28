@@ -12,6 +12,7 @@ option(IMPLEMENTATION "Choose library implementation")
 
 add_subdirectory(lib)
 add_subdirectory(app)
+add_subdirectory(viewer)
 
 if(IMPLEMENTATION STREQUAL "no_constraints")
     add_library(GameOfLifeLib ALIAS GoL_no_constraints)
