@@ -11,16 +11,21 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 option(IMPLEMENTATION "Choose library implementation")
 
 add_subdirectory(lib)
+
+set(_known_impls "no_constraints" "no_lists")
+
+if(NOT IMPLEMENTATION IN_LIST _known_impls)
+    message(WARNING "Unknown implementation: ${IMPLEMENTATION}. Defaulting to no_constraints.")
+    set(IMPLEMENTATION "no_constraints")
+endif()
+
+# Create alias to always point to the chosen impl
+set(_lib_target "GoL_${IMPLEMENTATION}")
+add_library(GameOfLifeLib ALIAS ${_lib_target})
+message(STATUS "Using implementation: ${IMPLEMENTATION} -> ${_lib_target}")
+
 add_subdirectory(app)
 add_subdirectory(viewer)
-
-if(IMPLEMENTATION STREQUAL "no_constraints")
-    add_library(GameOfLifeLib ALIAS GoL_no_constraints)
-elseif(IMPLEMENTATION STREQUAL "no_lists")
-    add_library(GameOfLifeLib ALIAS GoL_no_lists)
-else()
-    message(FATAL_ERROR "Unknown IMPLEMENTATION: ${IMPLEMENTATION}")
-endif()
 
 # Tests
 enable_testing()
