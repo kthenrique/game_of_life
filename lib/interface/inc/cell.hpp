@@ -4,15 +4,12 @@
 #include <cstddef>
 #include <functional>
 #include <ostream>
-#include <unordered_set>
 
 struct Cell;
 
-using Cells = std::unordered_set<Cell>;
-
 struct Cell {
-  std::size_t x;
-  std::size_t y;
+  long long x;
+  long long y;
 
   auto operator<=>(const Cell &) const = default;
 };
