@@ -3,7 +3,7 @@
 
 #include <cell.hpp>
 
-class Generation {
+template <typename Cells> class Generation {
   Cells cells_alive;
 
 public:
@@ -11,12 +11,25 @@ public:
   Generation() = default;
 
   Generation &next();
+  Cells const &get_alive_cells() const { return cells_alive; };
 
   auto operator<=>(const Generation &) const = default;
 
-  friend std::ostream &operator<<(std::ostream &os, const Generation &p);
+  template <typename Cells_>
+  friend std::ostream &operator<<(std::ostream &os,
+                                  const Generation<Cells_> &p);
 };
 
-std::ostream &operator<<(std::ostream &os, const Generation &p);
+template <typename Cells>
+inline std::ostream &operator<<(std::ostream &os,
+                                const Generation<Cells> &gen) {
+  os << "[ ";
+  for (auto const &cell : gen.cells_alive) {
+    os << cell << " ";
+  }
+  os << "]";
+
+  return os;
+}
 
 #endif

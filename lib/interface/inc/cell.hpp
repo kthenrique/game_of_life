@@ -8,8 +8,8 @@
 struct Cell;
 
 struct Cell {
-  long long x;
-  long long y;
+  int64_t x;
+  int64_t y;
 
   auto operator<=>(const Cell &) const = default;
 };

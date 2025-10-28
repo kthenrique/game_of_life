@@ -1,5 +1,8 @@
 #include <generation.hpp>
 #include <iostream>
+#include <unordered_set>
+
+using Cells = std::unordered_set<Cell>;
 
 namespace {
 Cells get_cell_neighbours(Cell const &cell) {
@@ -11,7 +14,7 @@ Cells get_cell_neighbours(Cell const &cell) {
 }
 } // namespace
 
-Generation &Generation::next() {
+template <typename Cells> Generation<Cells> &Generation<Cells>::next() {
   Cells cells_to_die;
   std::unordered_map<Cell, std::size_t> neighbour_count;
 
@@ -26,7 +29,7 @@ Generation &Generation::next() {
     }
     if ((nr_alive_neighbours != 2 && nr_alive_neighbours != 3) ||
         nr_alive_neighbours > 3) {
-      std::cout << "kill " << cell << std::endl;
+      // std::cout << "kill " << cell << std::endl;
       cells_to_die.insert(cell);
     }
   }
@@ -38,18 +41,10 @@ Generation &Generation::next() {
   for (auto const &[cell, count] : neighbour_count) {
     if (count == 3) {
       auto [_, inserted] = cells_alive.insert(cell);
-      inserted ? std::cout << "create " << cell << std::endl : std::cout;
+      // inserted ? std::cout << "create " << cell << std::endl : std::cout;
     }
   }
   return *this;
 }
 
-std::ostream &operator<<(std::ostream &os, const Generation &gen) {
-  os << "[ ";
-  for (auto const &cell : gen.cells_alive) {
-    os << cell << " ";
-  }
-  os << "]";
-
-  return os;
-}
+template class Generation<Cells>;

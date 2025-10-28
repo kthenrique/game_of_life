@@ -11,6 +11,8 @@ include(GoogleTest)
 
 add_executable(GameOfLifeTests game_of_life.cpp)
 target_link_libraries(GameOfLifeTests PRIVATE GameOfLifeLib GTest::gtest_main)
-#target_include_directories(GameOfLifeTests PRIVATE ${CMAKE_SOURCE_DIR})
+target_include_directories(GameOfLifeTests PRIVATE
+    ${CMAKE_SOURCE_DIR}/lib/${IMPLEMENTATION}/inc/)
 
-gtest_discover_tests(GameOfLifeTests)
+#gtest_discover_tests(GameOfLifeTests)
+add_test(NAME GameOfLifeTests COMMAND GameOfLifeTests)
