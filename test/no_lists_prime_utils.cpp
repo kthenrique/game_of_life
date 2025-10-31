@@ -1,6 +1,6 @@
-#include <array>
 #include <gtest/gtest.h>
 #include <prime_utils.hpp>
+#include <ranges>
 #include <utility>
 
 TEST(AssertionFailed, CellOutsideEnclosingGrid) {
@@ -69,29 +69,32 @@ TEST(NumberOfPrimeFactors, ZeroFactors) {
 
 struct Factorization {
   std::size_t product;
-  std::size_t nr_factors;
+  std::vector<std::size_t> factors;
 };
 
 class NumberOfPrimeFactors : public ::testing::TestWithParam<Factorization> {};
 
-TEST_P(NumberOfPrimeFactors, GetNrOfFactors) {
+TEST_P(NumberOfPrimeFactors, Factors) {
   auto const product = GetParam().product;
-  auto const expected_nr_factors = GetParam().nr_factors;
+  auto const factors = GetParam().factors;
+  auto const expected_nr_factors = factors.size();
 
   EXPECT_EQ(expected_nr_factors, get_nr_factors(product));
-  EXPECT_EQ(expected_nr_factors, get_nr_factors(product));
+  for (auto n : std::ranges::views::iota(std::size_t(0), expected_nr_factors)) {
+    EXPECT_EQ(factors[n], get_nth_prime_factor(n + 1, product));
+  }
 }
 
-INSTANTIATE_TEST_SUITE_P(PrimeFactors, NumberOfPrimeFactors,
-                         ::testing::Values(
-                             // Zero factors:
-                             Factorization{0, 0}, Factorization{1, 0},
-                             // One factor:
-                             Factorization{2, 1}, Factorization{7, 1},
-                             Factorization{23, 1},
-                             // Multiple different factors:
-                             Factorization{21, 2}, Factorization{110, 3},
-                             Factorization{10465, 4},
-                             // Multiple equal factors:
-                             Factorization{49, 2}, Factorization{1331, 3},
-                             Factorization{279841, 4}));
+INSTANTIATE_TEST_SUITE_P(
+    PrimeFactors, NumberOfPrimeFactors,
+    ::testing::Values(
+        // Zero factors:
+        Factorization{0, {}}, Factorization{1, {}},
+        // One factor:
+        Factorization{2, {2}}, Factorization{7, {7}}, Factorization{23, {23}},
+        // Multiple different factors:
+        Factorization{21, {3, 7}}, Factorization{110, {2, 5, 11}},
+        Factorization{10465, {5, 7, 13, 23}},
+        // Multiple equal factors:
+        Factorization{49, {7, 7}}, Factorization{1331, {11, 11, 11}},
+        Factorization{279841, {23, 23, 23, 23}}));
