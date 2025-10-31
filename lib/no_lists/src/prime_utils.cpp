@@ -61,9 +61,24 @@ std::size_t get_nr_factors(std::size_t product) {
       product /= factor;
       nr_factors++;
       if (product == 1) {
-        std::cout << "get_nr_factors: " << product << " => " << nr_factors
-                  << std::endl;
         return nr_factors;
+      }
+    }
+  }
+  assert(false);
+}
+
+std::size_t get_nth_prime_factor(std::size_t n, std::size_t product) {
+  auto nr_factors{0};
+
+  for (auto i{1}; product != 1; ++i) {
+    auto const prime = get_nth_prime(i);
+    while (product % prime == 0) {
+      product /= prime;
+      nr_factors++;
+      if (nr_factors == n) {
+        std::cout << "  found prime = " << prime << std::endl;
+        return prime;
       }
     }
   }
