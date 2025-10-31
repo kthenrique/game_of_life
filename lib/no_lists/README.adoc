@@ -14,8 +14,10 @@ Example:
 - Alive cells: (0,1), (1,1)
 - Calculated enclosing quadrilateral: (1,1)
 - Filled with primes:
-  |===
-  | 5 | 7 |
-  | 2 | 3 |
-  |===
++
+|===
+| 5 | 7 
+| 2 | 3 
+|===
+
 - Therefore, the product for the alive cells is: 35
