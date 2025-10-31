@@ -47,3 +47,25 @@ Cell get_cell_from_prime(std::size_t prime, Cell enclosing_grid) {
 
   assert(false);
 }
+
+std::size_t get_nr_factors(std::size_t product) {
+  if (product <= 1) {
+    return 0;
+  }
+
+  auto nr_factors{0};
+  std::size_t factor{0};
+  for (auto i{1}; product >= factor; ++i) {
+    factor = get_nth_prime(i);
+    while (product % factor == 0) {
+      product /= factor;
+      nr_factors++;
+      if (product == 1) {
+        std::cout << "get_nr_factors: " << product << " => " << nr_factors
+                  << std::endl;
+        return nr_factors;
+      }
+    }
+  }
+  assert(false);
+}
