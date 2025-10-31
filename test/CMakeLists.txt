@@ -19,7 +19,7 @@ gtest_discover_tests(GameOfLifeTests)
 add_executable(NoListsPrimeUtilsTests no_lists_prime_utils.cpp)
 target_link_libraries(NoListsPrimeUtilsTests PRIVATE GameOfLifeLib GoL_no_lists GTest::gtest_main)
 target_include_directories(NoListsPrimeUtilsTests PRIVATE
-    ${CMAKE_SOURCE_DIR}/lib/${IMPLEMENTATION}/inc/)
+    ${CMAKE_SOURCE_DIR}/lib/no_lists/inc/)
 
 gtest_discover_tests(NoListsPrimeUtilsTests)
 #add_test(NAME GameOfLifeTests COMMAND GameOfLifeTests)

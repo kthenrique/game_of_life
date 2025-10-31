@@ -180,16 +180,16 @@ int main() {
   auto erase_tooltip = [&] { tooltip = ""; };
 
   auto up_btn = Hoverable(
-      Button("⏶ ", update_offset(1, offset_y)),
+      Button("⏶", update_offset(1, offset_y)),
       [&] { tooltip = "🛈 Move view up"; }, erase_tooltip);
   auto left_btn = Hoverable(
-      Button("⏴ ", update_offset(1, offset_x)),
+      Button("⏴", update_offset(1, offset_x)),
       [&] { tooltip = "🛈 Move view left"; }, erase_tooltip);
   auto right_btn = Hoverable(
-      Button("⏵ ", update_offset(-1, offset_x)),
+      Button("⏵", update_offset(-1, offset_x)),
       [&] { tooltip = "🛈 Move view right"; }, erase_tooltip);
   auto down_btn = Hoverable(
-      Button("⏷ ", update_offset(-1, offset_y)),
+      Button("⏷", update_offset(-1, offset_y)),
       [&] { tooltip = "🛈 Move view down"; }, erase_tooltip);
 
   auto exit_btn = Hoverable(
@@ -197,23 +197,23 @@ int main() {
       erase_tooltip);
 
   auto slow_time_btn = Hoverable(
-      Button("⏮ ", [&] { runtime_ctrl_selected = 0; }),
+      Button("⏮", [&] { runtime_ctrl_selected = 0; }),
       [&] {
         tooltip = std::format("🛈 Increase epoch period by {} - currently at {}",
                               epoch_period_increment, epoch_period);
       },
       erase_tooltip);
   auto play_btn = Hoverable(
-      Button("⏵ ", [&] { runtime_ctrl_selected = 1; }),
+      Button("⏵", [&] { runtime_ctrl_selected = 1; }),
       [&] { tooltip = "🛈 Continue"; }, erase_tooltip);
   auto pause_time_btn = Hoverable(
-      Button("⏸ ", [&] { runtime_ctrl_selected = 2; }),
+      Button("⏸", [&] { runtime_ctrl_selected = 2; }),
       [&] { tooltip = "🛈 Pause time"; }, erase_tooltip);
   auto stop_btn = Hoverable(
-      Button("⏹ ", [&] { runtime_ctrl_selected = 3; }),
+      Button("⏹", [&] { runtime_ctrl_selected = 3; }),
       [&] { tooltip = "🛈 Exit game"; }, erase_tooltip);
   auto speed_time_btn = Hoverable(
-      Button("⏭ ", [&] { runtime_ctrl_selected = 4; }),
+      Button("⏭", [&] { runtime_ctrl_selected = 4; }),
       [&] {
         tooltip = std::format("🛈 Decrease epoch period by {} - currently at {}",
                               epoch_period_increment, epoch_period);
