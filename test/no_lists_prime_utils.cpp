@@ -47,8 +47,9 @@ TEST_P(PrimeParameterizedTests, GetPrimeWhenGridIsMinimum) {
 
   for (auto const &exp : expectations) {
     auto const &cell = exp.first;
-    int const &expected_prime = exp.second;
+    int const &prime = exp.second;
 
-    EXPECT_EQ(expected_prime, get_prime_from_cell(cell, enclosing_grid));
+    EXPECT_EQ(prime, get_prime_from_cell(cell, enclosing_grid));
+    EXPECT_EQ(cell, get_cell_from_prime(prime, enclosing_grid));
   }
 }
