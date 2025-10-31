@@ -1,3 +1,4 @@
+#include <cassert>
 #include <cmath>
 #include <iostream>
 #include <prime_utils.hpp>
@@ -24,8 +25,25 @@ std::size_t get_nth_prime(std::size_t n) {
 } // namespace
 
 std::size_t get_prime_from_cell(Cell const &cell, Cell const &enclosing_grid) {
+  assert(cell.x <= enclosing_grid.x && cell.y <= enclosing_grid.y);
+
   std::size_t prime_position = (1 + enclosing_grid.x) * cell.y + cell.x + 1;
-  std::cout << "get_prime_from_cell: ie. " << prime_position << "th prime"
-            << std::endl;
   return get_nth_prime(prime_position);
+}
+
+Cell get_cell_from_prime(std::size_t prime, Cell enclosing_grid) {
+  auto nr_factors{0};
+  auto nth{1};
+
+  for (auto y{0}; y <= enclosing_grid.y; y++) {
+    for (auto x{0}; x <= enclosing_grid.x; x++) {
+      auto nth_prime = get_nth_prime(nth);
+      if (prime == nth_prime) {
+        return Cell{x, y};
+      }
+      nth++;
+    }
+  }
+
+  assert(false);
 }
