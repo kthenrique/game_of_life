@@ -1,6 +1,8 @@
 = Game of Life
 :author: Kelve T. Henrique
 
+image::viewer/viewer.gif[Demo animation, width=400]
+
 == Rules
 
 [quote, Wikipedia, https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life]
