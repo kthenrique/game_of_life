@@ -53,3 +53,11 @@ TEST_P(PrimeParameterizedTests, GetPrimeWhenGridIsMinimum) {
     EXPECT_EQ(cell, get_cell_from_prime(prime, enclosing_grid));
   }
 }
+
+TEST(AssertionFailed, CellOutsideEnclosingGrid) {
+  EXPECT_DEATH(get_prime_from_cell({5, 5}, {1, 1}), ",*");
+}
+
+TEST(AssertionFailed, PrimeOutsideEnclosingGrid) {
+  EXPECT_DEATH(get_cell_from_prime(17, {1, 1}), ",*");
+}
