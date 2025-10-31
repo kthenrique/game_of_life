@@ -45,13 +45,10 @@ int main() {
       author_line,
   });
 
-  auto alive = "■";
-  auto dead = "□";
-
   auto screen = ::ftxui::ScreenInteractive::Fullscreen();
   Cell window_size{26, 26};
 
-  auto epoch_period = std::chrono::milliseconds(1300);
+  auto epoch_period = std::chrono::milliseconds(1000);
   auto const epoch_period_increment = std::chrono::milliseconds(100);
   std::size_t epoch{0};
 
@@ -84,8 +81,7 @@ int main() {
     std::vector<Element> longitude;
     longitude.reserve(window_size.x);
     for (int x = 0; x < window_size.x; x++) {
-      Element node =
-          text(dead) | center | size(WIDTH, EQUAL, 2) | size(HEIGHT, EQUAL, 1);
+      Element node = dead_cell();
       longitude.push_back(node);
     }
     planet.push_back(longitude);
@@ -197,7 +193,7 @@ int main() {
       [&] { tooltip = "🛈 Move view down"; }, erase_tooltip);
 
   auto exit_btn = Hoverable(
-      Button(" ⏻  ", [&] { screen.Exit(); }), [&] { tooltip = "🛈 Exit"; },
+      Button(" ⏻ ", [&] { screen.Exit(); }), [&] { tooltip = "🛈 Exit"; },
       erase_tooltip);
 
   auto slow_time_btn = Hoverable(
