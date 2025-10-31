@@ -1,2 +1,3 @@
-add_library(GoL_no_constraints src/generation.cpp)
+add_library(GoL_no_constraints src/cells.cpp)
+target_include_directories(GoL_no_constraints PRIVATE inc/)
 target_link_libraries(GoL_no_constraints PUBLIC GameOfLifeIfaceLib)
