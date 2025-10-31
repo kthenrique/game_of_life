@@ -1,3 +1,21 @@
-= No array-alike containers
+= No list-alike containers
 
 No vectors, no lists, no linked-lists...
+
+== Proposed Solution
+
+The 2D space is reduced to an enclosing quadrilateral, and each possible cell within it is represented
+by a unique prime number.
+The product of all prime numbers corresponding to alive cells, together with the enclosing quadrilateral,
+serves as a replacement for the list of cells.
+
+Example:
+
+- Alive cells: (0,1), (1,1)
+- Calculated enclosing quadrilateral: (1,1)
+- Filled with primes:
+  |===
+  | 5 | 7 |
+  | 2 | 3 |
+  |===
+- Therefore, the product for the alive cells is: 35
