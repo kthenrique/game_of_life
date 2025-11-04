@@ -35,7 +35,7 @@ public:
   iterator begin() const;
   iterator end() const;
 
-  bool contains(Cell cell);
+  bool contains(Cell cell) const;
   std::pair<Cell, bool> insert(Cell cell);
   void erase(Cell cell);
 
@@ -43,6 +43,7 @@ public:
 
 private:
   Quadrant m_first, m_second, m_third, m_fourth;
-  Quadrant &determine_cell_quadrant(Cell cell);
+  Quadrant const &get_cell_quadrant(Cell cell) const;
+  Quadrant &get_cell_quadrant(Cell cell);
 };
 #endif

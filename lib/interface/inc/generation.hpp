@@ -44,6 +44,9 @@ public:
   };
   Cells const &get_alive_cells() const { return cells_alive; };
 
+  auto insert(Cell alive) { return cells_alive.insert(alive); };
+  void erase(Cell alive) { return cells_alive.erase(alive); };
+
   auto operator<=>(const Generation &) const = default;
 
   template <typename Cells_>

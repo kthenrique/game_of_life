@@ -49,7 +49,7 @@ void end_quadrant_it(Cells::Quadrant const q,
 
 Cells::Cells(std::unordered_set<Cell> const &cells) {
   for (auto const &cell : cells) {
-    Quadrant &quadrant = determine_cell_quadrant(cell);
+    Quadrant &quadrant = get_cell_quadrant(cell);
     if (std::abs(cell.x) > quadrant.enclosing_grid.x)
       quadrant.enclosing_grid.x = std::abs(cell.x);
     if (std::abs(cell.y) > quadrant.enclosing_grid.y)
@@ -57,7 +57,7 @@ Cells::Cells(std::unordered_set<Cell> const &cells) {
   }
 
   for (auto const &cell : cells) {
-    Quadrant &quadrant = determine_cell_quadrant(cell);
+    Quadrant &quadrant = get_cell_quadrant(cell);
     auto const prime = get_prime_from_cell({std::abs(cell.x), std::abs(cell.y)},
                                            quadrant.enclosing_grid);
     quadrant.product *= prime;
@@ -153,8 +153,8 @@ Cell Cells::iterator::operator*() const {
   return {};
 }
 
-bool Cells::contains(Cell cell) {
-  Quadrant &quadrant = determine_cell_quadrant(cell);
+bool Cells::contains(Cell cell) const {
+  Quadrant const &quadrant = get_cell_quadrant(cell);
   bool is_cell_present = false;
 
   if (std::abs(cell.x) > quadrant.enclosing_grid.x ||
@@ -168,7 +168,7 @@ bool Cells::contains(Cell cell) {
 }
 
 std::pair<Cell, bool> Cells::insert(Cell cell) {
-  Quadrant &quadrant = determine_cell_quadrant(cell);
+  Quadrant &quadrant = get_cell_quadrant(cell);
 
   if (contains(cell)) {
     return {cell, false};
@@ -196,7 +196,7 @@ std::pair<Cell, bool> Cells::insert(Cell cell) {
 }
 
 void Cells::erase(Cell cell) {
-  Quadrant &quadrant = determine_cell_quadrant(cell);
+  Quadrant &quadrant = get_cell_quadrant(cell);
 
   auto const prime = get_prime_from_cell({std::abs(cell.x), std::abs(cell.y)},
                                          quadrant.enclosing_grid);
@@ -218,7 +218,11 @@ void Cells::erase(Cell cell) {
   }
 }
 
-Cells::Quadrant &Cells::determine_cell_quadrant(Cell cell) {
+const Cells::Quadrant &Cells::get_cell_quadrant(Cell cell) const {
+  return const_cast<Cells *>(this)->get_cell_quadrant(cell);
+}
+
+Cells::Quadrant &Cells::get_cell_quadrant(Cell cell) {
   if (cell.x >= 0) {
     if (cell.y >= 0) {
       return m_first;
