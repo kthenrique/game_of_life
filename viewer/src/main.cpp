@@ -14,14 +14,18 @@ using ::ftxui::bold;
 using ::ftxui::border;
 using ::ftxui::borderRounded;
 using ::ftxui::Button;
+using ::ftxui::CatchEvent;
 using ::ftxui::center;
+using ::ftxui::Component;
 using ::ftxui::Element;
 using ::ftxui::Elements;
+using ::ftxui::Event;
 using ::ftxui::filler;
 using ::ftxui::flex;
 using ::ftxui::gridbox;
 using ::ftxui::hbox;
 using ::ftxui::hcenter;
+using ::ftxui::Mouse;
 using ::ftxui::separator;
 using ::ftxui::text;
 using ::ftxui::vbox;
@@ -37,14 +41,14 @@ int main() {
   std::size_t epoch{0};
 
   Cells initial_seed = std::unordered_set<Cell>{
-      {-6, 2},  {-6, 1}, {-6, 0},  {-6, -1}, {-6, -2}, {-5, 0}, {-4, 1},
-      {-4, -1}, {-3, 2}, {-3, -2}, {-1, -2},
+      {-8, 2},  {-8, 1}, {-8, 0},  {-8, -1}, {-8, -2}, {-7, 0}, {-6, 1},
+      {-6, -1}, {-5, 2}, {-5, -2}, {-3, -2},
 
-      {2, 2},   {2, 1},  {2, 0},   {2, -1},  {2, -2},  {0, 2},  {1, 2},
-      {2, 2},   {3, 2},  {4, 2},   {4, -2},
+      {0, 2},   {0, 1},  {0, 0},   {0, -1},  {0, -2},  {-2, 2}, {-1, 2},
+      {0, 2},   {1, 2},  {2, 2},   {2, -2},
 
-      {7, 2},   {7, 1},  {7, 0},   {7, -1},  {7, -2},  {8, 0},  {9, 0},
-      {10, 2},  {10, 1}, {10, 0},  {10, -1}, {10, -2}, {12, -2}};
+      {5, 2},   {5, 1},  {5, 0},   {5, -1},  {5, -2},  {6, 0},  {7, 0},
+      {8, 2},   {8, 1},  {8, 0},   {8, -1},  {8, -2},  {10, -2}};
   auto gen = Generation<Cells>(initial_seed);
 
   std::atomic<int64_t> offset_x{0};
@@ -80,8 +84,8 @@ int main() {
 
     auto const &cells = gen.get_alive_cells();
     for (auto const &cell : cells) {
-      Cell const transformed = {.x = cell.x + 10 + offset_x,
-                                .y = std::abs(cell.y - 10) + offset_y};
+      Cell const transformed = {.x = cell.x + window_size.x / 2 + offset_x,
+                                .y = window_size.y / 2 - cell.y + offset_y};
       if (transformed.x < 0 || transformed.y < 0 ||
           transformed.x >= window_size.x || transformed.y >= window_size.y) {
         continue;

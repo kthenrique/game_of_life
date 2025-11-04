@@ -1,6 +1,5 @@
 #include <cassert>
 #include <cmath>
-#include <iostream>
 #include <prime_utils.hpp>
 #include <ranges>
 
@@ -78,7 +77,6 @@ std::size_t get_nth_prime_factor(std::size_t n,
       product /= prime;
       nr_factors++;
       if (nr_factors == n) {
-        std::cout << "  found prime = " << prime << std::endl;
         return prime;
       }
     }
