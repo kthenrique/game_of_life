@@ -1,8 +1,9 @@
 #include <cells.hpp>
 
 namespace {
-std::size_t convert_product_to_new_grid(std::size_t product, Cell old_grid,
-                                        Cell new_grid) {
+std::size_t
+convert_product_to_new_grid(::boost::multiprecision::cpp_int product,
+                            Cell old_grid, Cell new_grid) {
   std::size_t new_product{1};
   auto const nr_factors = get_nr_factors(product);
 
@@ -15,7 +16,8 @@ std::size_t convert_product_to_new_grid(std::size_t product, Cell old_grid,
   return new_product;
 }
 
-Cell update_enclosing_grid(std::size_t product, Cell old_grid) {
+Cell update_enclosing_grid(::boost::multiprecision::cpp_int product,
+                           Cell old_grid) {
   Cell new_grid{0, 0};
   auto const nr_factors = get_nr_factors(product);
   for (auto nth_factor{1}; nth_factor <= nr_factors; nth_factor++) {

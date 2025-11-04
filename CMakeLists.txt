@@ -15,7 +15,10 @@ add_subdirectory(lib)
 set(_known_impls "no_constraints" "no_lists")
 
 if(NOT IMPLEMENTATION IN_LIST _known_impls)
-    message(WARNING "Unknown implementation: ${IMPLEMENTATION}. Defaulting to no_constraints.")
+    message(
+        WARNING
+        "Unknown implementation: ${IMPLEMENTATION}. Defaulting to no_constraints."
+    )
     set(IMPLEMENTATION "no_constraints")
 endif()
 
