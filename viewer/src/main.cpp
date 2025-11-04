@@ -7,46 +7,30 @@
 #include <ftxui/screen/screen.hpp>
 #include <generation.hpp>
 #include <ranges>
+#include <theme.hpp>
+#include <utils.hpp>
 
-using namespace ftxui;
+using ::ftxui::bold;
+using ::ftxui::border;
+using ::ftxui::borderRounded;
+using ::ftxui::Button;
 using ::ftxui::center;
 using ::ftxui::Element;
 using ::ftxui::Elements;
+using ::ftxui::filler;
+using ::ftxui::flex;
 using ::ftxui::gridbox;
+using ::ftxui::hbox;
+using ::ftxui::hcenter;
 using ::ftxui::separator;
-using ::ftxui::size;
 using ::ftxui::text;
-
-auto dead_cell() {
-  auto dead = "□";
-  return text(dead) | center | size(WIDTH, EQUAL, 2) | size(HEIGHT, EQUAL, 1);
-}
-auto alive_cell() {
-  auto const cell_color = color(Color::DarkRed);
-  auto alive = "■";
-  return text(alive) | center | cell_color | size(WIDTH, EQUAL, 2) |
-         size(HEIGHT, EQUAL, 1);
-}
+using ::ftxui::vbox;
+using ::ftxui::Container::Horizontal;
 
 int main() {
-  auto const title_color = color(Color::DeepSkyBlue1);
-  auto title = vbox({
-                   text("┏━╸┏━┓┏┳┓┏━╸ ┏━┓┏━╸ ╻  ╻┏━╸┏━╸"),
-                   text("┃╺┓┣━┫┃┃┃┣╸  ┃ ┃┣╸  ┃  ┃┣╸ ┣╸ "),
-                   text("┗━┛╹ ╹╹ ╹┗━╸ ┗━┛╹   ┗━╸╹╹  ┗━╸"),
-
-               }) |
-               bold | title_color | hcenter;
-
-  auto author_line = text("by Kelve T. Henrique") | dim | align_right;
-
-  auto header = vbox({
-      title,
-      author_line,
-  });
-
+  auto header = utils::get_header();
   auto screen = ::ftxui::ScreenInteractive::Fullscreen();
-  Cell window_size{26, 26};
+  Cell window_size{36, 36};
 
   auto epoch_period = std::chrono::milliseconds(1000);
   auto const epoch_period_increment = std::chrono::milliseconds(100);
@@ -66,7 +50,7 @@ int main() {
   std::atomic<int64_t> offset_x{0};
   std::atomic<int64_t> offset_y{0};
 
-  int runtime_ctrl_selected = 2; // begin paused
+  utils::Runtime_ctrl runtime_ctrl_selected = utils::Runtime_ctrl::pause;
   auto reaction_to_runtime_ctrl = std::chrono::milliseconds(500);
 
   std::array<std::string, 2> clock_frames = {"●", "○"};
@@ -81,7 +65,7 @@ int main() {
     std::vector<Element> longitude;
     longitude.reserve(window_size.x);
     for (int x = 0; x < window_size.x; x++) {
-      Element node = dead_cell();
+      Element node = utils::dead_cell();
       longitude.push_back(node);
     }
     planet.push_back(longitude);
@@ -90,7 +74,7 @@ int main() {
   auto update_window_view = [&] {
     for (int y = 0; y < window_size.y; y++) {
       for (int x = 0; x < window_size.x; x++) {
-        planet[x][y] = dead_cell();
+        planet[x][y] = utils::dead_cell();
       }
     }
 
@@ -103,7 +87,7 @@ int main() {
         continue;
       }
 
-      planet[transformed.y][transformed.x] = alive_cell();
+      planet[transformed.y][transformed.x] = utils::alive_cell();
     }
   };
 
@@ -114,42 +98,43 @@ int main() {
 
       update_window_view();
     }
-    screen.PostEvent(Event::Custom);
+    screen.PostEvent(ftxui::Event::Custom);
     while (true) {
       switch (runtime_ctrl_selected) {
-      case 3: { // stop
+      case utils::Runtime_ctrl::stop: {
         epoch = 0;
         gen = Generation<Cells>(initial_seed);
-        runtime_ctrl_selected = 2;
+        runtime_ctrl_selected = utils::Runtime_ctrl::pause;
         {
           std::lock_guard<std::mutex> lg(planet_mutex);
 
           update_window_view();
         }
-        screen.PostEvent(Event::Custom);
+        screen.PostEvent(ftxui::Event::Custom);
         continue;
       }
-      case 2: { // pause
+      case utils::Runtime_ctrl::pause: {
         std::this_thread::sleep_for(reaction_to_runtime_ctrl);
         continue;
       }
-      case 4: { // speed epoch period up
+      case utils::Runtime_ctrl::fast_forward: { // speed epoch period up
         if (epoch_period < epoch_period_increment) {
           epoch_period = std::chrono::milliseconds(0);
         } else {
           epoch_period -= epoch_period_increment;
         }
-        runtime_ctrl_selected = 1;
-        screen.PostEvent(Event::Custom);
+        runtime_ctrl_selected = utils::Runtime_ctrl::start;
+        screen.PostEvent(ftxui::Event::Custom);
         continue;
       }
-      case 0: { // slow epoch period down
+      case utils::Runtime_ctrl::rewind: { // slow epoch period down
         epoch_period += epoch_period_increment;
-        runtime_ctrl_selected = 1;
-        screen.PostEvent(Event::Custom);
+        runtime_ctrl_selected = utils::Runtime_ctrl::start;
+        screen.PostEvent(ftxui::Event::Custom);
         continue;
       }
-      case 1: // play
+      case utils::Runtime_ctrl::start:
+        [[fallthrough]];
       default: {
         // nothing todo
       }
@@ -160,7 +145,7 @@ int main() {
 
         update_window_view();
       }
-      screen.PostEvent(Event::Custom);
+      screen.PostEvent(ftxui::Event::Custom);
       std::this_thread::sleep_for(epoch_period);
       gen.next();
       ++epoch;
@@ -172,57 +157,62 @@ int main() {
       std::lock_guard<std::mutex> lg(planet_mutex);
       offset += update;
       update_window_view();
-      screen.PostEvent(Event::Custom);
+      screen.PostEvent(ftxui::Event::Custom);
     };
   };
 
   std::string tooltip;
   auto erase_tooltip = [&] { tooltip = ""; };
+  auto update_tooltip = [&](std::string tt) {
+    return [&tooltip, tt_ = std::move(tt)] { tooltip = tt_; };
+  };
 
-  auto up_btn = Hoverable(
-      Button("⏶", update_offset(1, offset_y)),
-      [&] { tooltip = "🛈 Move view up"; }, erase_tooltip);
-  auto left_btn = Hoverable(
-      Button("⏴", update_offset(1, offset_x)),
-      [&] { tooltip = "🛈 Move view left"; }, erase_tooltip);
-  auto right_btn = Hoverable(
-      Button("⏵", update_offset(-1, offset_x)),
-      [&] { tooltip = "🛈 Move view right"; }, erase_tooltip);
-  auto down_btn = Hoverable(
-      Button("⏷", update_offset(-1, offset_y)),
-      [&] { tooltip = "🛈 Move view down"; }, erase_tooltip);
+  auto up_btn = Hoverable(Button(" ⏶ ", update_offset(1, offset_y)),
+                          update_tooltip("🛈 Move view up"), erase_tooltip);
+  auto left_btn = Hoverable(Button(" ⏴ ", update_offset(1, offset_x)),
+                            update_tooltip("🛈 Move view left"), erase_tooltip);
+  auto right_btn =
+      Hoverable(Button(" ⏵ ", update_offset(-1, offset_x)),
+                update_tooltip("🛈 Move view right"), erase_tooltip);
+  auto down_btn = Hoverable(Button(" ⏷ ", update_offset(-1, offset_y)),
+                            update_tooltip("🛈 Move view down"), erase_tooltip);
 
   auto exit_btn = Hoverable(
       Button(" ⏻ ", [&] { screen.Exit(); }), [&] { tooltip = "🛈 Exit"; },
       erase_tooltip);
 
   auto slow_time_btn = Hoverable(
-      Button("⏮", [&] { runtime_ctrl_selected = 0; }),
+      Button(" ⏮ ",
+             [&] { runtime_ctrl_selected = utils::Runtime_ctrl::rewind; }),
       [&] {
         tooltip = std::format("🛈 Increase epoch period by {} - currently at {}",
                               epoch_period_increment, epoch_period);
       },
       erase_tooltip);
   auto play_btn = Hoverable(
-      Button("⏵", [&] { runtime_ctrl_selected = 1; }),
-      [&] { tooltip = "🛈 Continue"; }, erase_tooltip);
+      Button(" ⏵ ",
+             [&] { runtime_ctrl_selected = utils::Runtime_ctrl::start; }),
+      update_tooltip("🛈 Continue"), erase_tooltip);
   auto pause_time_btn = Hoverable(
-      Button("⏸", [&] { runtime_ctrl_selected = 2; }),
-      [&] { tooltip = "🛈 Pause time"; }, erase_tooltip);
+      Button(" ⏸ ",
+             [&] { runtime_ctrl_selected = utils::Runtime_ctrl::pause; }),
+      update_tooltip("🛈 Pause time"), erase_tooltip);
   auto stop_btn = Hoverable(
-      Button("⏹", [&] { runtime_ctrl_selected = 3; }),
-      [&] { tooltip = "🛈 Exit game"; }, erase_tooltip);
+      Button(" ⏹ ", [&] { runtime_ctrl_selected = utils::Runtime_ctrl::stop; }),
+      update_tooltip("🛈 Exit game"), erase_tooltip);
   auto speed_time_btn = Hoverable(
-      Button("⏭", [&] { runtime_ctrl_selected = 4; }),
+      Button(
+          " ⏭ ",
+          [&] { runtime_ctrl_selected = utils::Runtime_ctrl::fast_forward; }),
       [&] {
         tooltip = std::format("🛈 Decrease epoch period by {} - currently at {}",
                               epoch_period_increment, epoch_period);
       },
       erase_tooltip);
 
-  auto controls = Container::Horizontal(
-      {up_btn, left_btn, right_btn, down_btn, exit_btn, slow_time_btn, play_btn,
-       pause_time_btn, stop_btn, speed_time_btn});
+  auto controls = Horizontal({up_btn, left_btn, right_btn, down_btn, exit_btn,
+                              slow_time_btn, play_btn, pause_time_btn, stop_btn,
+                              speed_time_btn});
 
   auto main_renderer = Renderer(controls, [&] {
     std::lock_guard<std::mutex> lg(planet_mutex);
@@ -235,7 +225,7 @@ int main() {
 
     auto status = hbox({epoch_label | flex, label});
     auto grid =
-        hbox({gridbox(planet) | bgcolor(Color::GrayDark) | border | center});
+        hbox({gridbox(planet) | theme::grid_bg_color | border | center});
 
     auto viewport_buttons = hbox({
         up_btn->Render(),
@@ -251,7 +241,7 @@ int main() {
                                      : vbox({separator(), tooltip_label});
     return vbox({header | hcenter, status, separator(), grid | hcenter,
                  hbox({viewport_buttons | bold | borderRounded, filler(),
-                       exit_btn->Render() | title_color | borderRounded,
+                       exit_btn->Render() | theme::main_color | borderRounded,
                        filler(), simulation_buttons | bold | borderRounded}) |
                      bold | borderRounded,
                  tooltip_txt}) |
