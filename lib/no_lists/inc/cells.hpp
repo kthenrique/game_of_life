@@ -1,6 +1,7 @@
 #ifndef CELLS_HPP
 #define CELLS_HPP
 
+#include <boost/multiprecision/cpp_int.hpp>
 #include <cell.hpp>
 #include <prime_utils.hpp>
 #include <unordered_set>
@@ -9,7 +10,7 @@ class Cells {
 public:
   struct Quadrant {
     Cell enclosing_grid{0, 0};
-    std::size_t product{1};
+    ::boost::multiprecision::cpp_int product{1};
 
     constexpr bool operator==(const Quadrant &) const = default;
   };

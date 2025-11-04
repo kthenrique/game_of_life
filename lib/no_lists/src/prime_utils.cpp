@@ -48,7 +48,7 @@ Cell get_cell_from_prime(std::size_t prime, Cell enclosing_grid) {
   assert(false);
 }
 
-std::size_t get_nr_factors(std::size_t product) {
+std::size_t get_nr_factors(::boost::multiprecision::cpp_int product) {
   if (product <= 1) {
     return 0;
   }
@@ -68,7 +68,8 @@ std::size_t get_nr_factors(std::size_t product) {
   assert(false);
 }
 
-std::size_t get_nth_prime_factor(std::size_t n, std::size_t product) {
+std::size_t get_nth_prime_factor(std::size_t n,
+                                 ::boost::multiprecision::cpp_int product) {
   auto nr_factors{0};
 
   for (auto i{1}; product != 1; ++i) {
