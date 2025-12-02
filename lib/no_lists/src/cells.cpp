@@ -93,21 +93,15 @@ Cells::iterator &Cells::iterator::operator++() {
 
   if (first.current_cell_index <= first.nr_cells) {
     first.current_cell_index++;
-    if (first.current_cell_index != (first.nr_cells + 1)) {
-      return *this;
-    }
+    return *this;
   }
   if (second.current_cell_index <= second.nr_cells) {
     second.current_cell_index++;
-    if (second.current_cell_index != (second.nr_cells + 1)) {
-      return *this;
-    }
+    return *this;
   }
   if (third.current_cell_index <= third.nr_cells) {
     third.current_cell_index++;
-    if (third.current_cell_index != (third.nr_cells + 1)) {
-      return *this;
-    }
+    return *this;
   }
   if (fourth.current_cell_index <= fourth.nr_cells) {
     fourth.current_cell_index++;
