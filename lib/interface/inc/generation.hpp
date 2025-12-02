@@ -56,7 +56,7 @@ public:
 
 template <typename Cells>
 inline std::ostream &operator<<(std::ostream &os,
-                                const Generation<Cells> &gen) {
+                                Generation<Cells> const &gen) {
   os << "[ ";
   for (auto const &cell : gen.cells_alive) {
     os << cell << " ";
