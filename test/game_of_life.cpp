@@ -14,6 +14,11 @@ std::ostream &operator<<(std::ostream &os, const Parameters<Cells> &p) {
   return os;
 }
 
+Parameters NoNeighboursMeansExtinctionInAllQuadrants = {
+    Generation(
+        Cells{std::unordered_set<Cell>{{0, 0}, {0, -2}, {-2, 0}, {-2, -2}}}),
+    Generation(Cells{})};
+
 Parameters NoNeighboursMeansExtinction = {
     Generation(Cells{std::unordered_set<Cell>{{0, 0}, {0, 2}, {2, 0}, {2, 2}}}),
     Generation(Cells{})};
@@ -51,17 +56,23 @@ class GoLTests : public ::testing::TestWithParam<Parameters<Cells>> {};
 
 TEST_P(GoLTests, NextGeneration) {
   auto generation = GetParam().initial_generation;
+  std::cout << "Generation: " << generation << std::endl;
   EXPECT_EQ(generation.next(), GetParam().expected_next_generation);
 }
 
-constexpr std::array<char const *, 6> test_name = {
-    "NoNeighboursMeansExtinction", "UnderPopulationResultsInExtinction",
-    "SurvivalBy2DoomedNeighbours", "SurvivalBy3DoomedNeighbours",
-    "TooManyNeighboursIsFatal",    "Reproduction"};
+constexpr std::array<char const *, 7> test_name = {
+    "NoNeighboursMeansExtinctionInAllQuadrants",
+    "NoNeighboursMeansExtinction",
+    "UnderPopulationResultsInExtinction",
+    "SurvivalBy2DoomedNeighbours",
+    "SurvivalBy3DoomedNeighbours",
+    "TooManyNeighboursIsFatal",
+    "Reproduction"};
 
 INSTANTIATE_TEST_SUITE_P(
     NextGeneration, GoLTests,
-    ::testing::Values(NoNeighboursMeansExtinction,
+    ::testing::Values(NoNeighboursMeansExtinctionInAllQuadrants,
+                      NoNeighboursMeansExtinction,
                       UnderPopulationResultsInExtinction,
                       SurvivalBy2DoomedNeighbours, SurvivalBy3DoomedNeighbours,
                       TooManyNeighboursIsFatal, Reproduction),
