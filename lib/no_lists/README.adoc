@@ -4,8 +4,9 @@ No vectors, no lists, no linked-lists...
 
 == Proposed Solution
 
-The 2D space is reduced to an enclosing quadrilateral, and each possible cell within it is represented
-by a unique prime number.
+The 2D space is reduced to a minimum enclosing quadrilateral that still holds all living cells.
+Each cell within the resulting enclosing quadrilateral is represented by a unique prime number.
+The cells are filled from left to right beginning in (0,0) with prime 2.
 The product of all prime numbers corresponding to alive cells, together with the enclosing quadrilateral,
 serves as a replacement for the list of cells.
 
@@ -20,4 +21,4 @@ Example:
 | 2 | 3 
 |===
 
-- Therefore, the product for the alive cells is: 35
+- Therefore, the product for the alive cells is: 5 x 7 = 35
