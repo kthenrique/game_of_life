@@ -8,7 +8,7 @@ TEST(AssertionFailed, CellOutsideEnclosingGrid) {
 }
 
 TEST(AssertionFailed, PrimeOutsideEnclosingGrid) {
-  EXPECT_DEATH(get_cell_from_prime(17, {1, 1}), ",*");
+  EXPECT_THROW(get_cell_from_prime(17, {1, 1}), std::out_of_range);
 }
 
 struct Grid_cell_prime {
