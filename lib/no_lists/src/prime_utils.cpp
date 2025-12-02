@@ -53,18 +53,28 @@ std::size_t get_nr_factors(::boost::multiprecision::cpp_int product) {
   }
 
   auto nr_factors{0};
-  std::size_t factor{0};
-  for (auto i{1}; product >= factor; ++i) {
-    factor = get_nth_prime(i);
-    while (product % factor == 0) {
-      product /= factor;
-      nr_factors++;
-      if (product == 1) {
-        return nr_factors;
-      }
-    }
+  std::size_t factor{2};
+  while (product % factor == 0) {
+    product /= factor;
+    nr_factors++;
   }
-  assert(false);
+  auto limit = sqrt(product);
+  factor = 3;
+  while (factor <= limit) {
+    if (product % factor == 0) {
+      while (product % factor == 0) {
+        product /= factor;
+        nr_factors++;
+      }
+      limit = sqrt(product);
+    }
+    factor += 2;
+  }
+  if (product != 1) {
+    nr_factors++;
+  }
+
+  return nr_factors;
 }
 
 std::size_t get_nth_prime_factor(std::size_t n,
